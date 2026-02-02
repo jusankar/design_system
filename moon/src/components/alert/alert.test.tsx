@@ -8,7 +8,7 @@ import {
   AlertDescription,
   AlertTitle,
   AlertAction,
-} from "@/components/ui/alert"
+} from "src/components/alert"
 import { CheckCircle2Icon, InfoIcon, AlertCircleIcon } from "lucide-react"
 
 describe("Alert Component", () => {
