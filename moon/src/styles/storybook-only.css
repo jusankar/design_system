@@ -1,0 +1,20 @@
+@import './index.css';
+@source "../sandbox";
+
+/* -------------------------------------------------------------------------- */
+/* Storybook-only layout helpers                                               */
+/* -------------------------------------------------------------------------- */
+
+/* Give stories breathing room so "outside" UI isn't clipped/off-canvas */
+.sb-show-main {
+	padding-inline: 3rem;
+}
+
+/* Carousel nav buttons: position outside slides (Storybook only) */
+.sb-show-main [data-slot='carousel-previous'] {
+	left: -3rem !important; /* matches Tailwind -left-12 */
+}
+
+.sb-show-main [data-slot='carousel-next'] {
+	right: -3rem !important; /* matches Tailwind -right-12 */
+}

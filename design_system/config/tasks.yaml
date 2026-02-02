@@ -1,0 +1,175 @@
+fetch_component:
+  description: >
+    Scrape the ShadCN component TSX code from
+    the Installation → Manual tab.
+    Extract ONLY the first copy-paste code block.
+  expected_output: >
+    A string containing valid TSX component code.fetch_component:
+  description: >
+    Use the shadcn_component_scraper tool to scrape the ShadCN component page.
+    Navigate to Installation → Manual tab.
+    Extract ONLY the FIRST copy-paste code block shown under the Manual tab.
+    Do NOT summarize, modify, or generate code.
+    Return the extracted code exactly as scraped.
+  expected_output: >
+    A raw string containing valid TSX component source code
+    exactly as shown in the ShadCN Manual installation section.
+    
+fetch_markdown:
+  description: >
+    Fetch the raw markdown (.md) file for the requested ShadCN radix component.
+    You MUST use the shadcn_varient_scraper tool.
+    Do NOT invent, summarize, or alter the markdown.
+  expected_output: >
+    A JSON object with:
+    - markdown: string (raw markdown content)
+    - component: string (component name requested)
+
+create_demo:
+  description: >
+    Extract the primary React TSX component demo code from the markdown.
+    Use ONLY fenced tsx code blocks related to the component implementation.
+    Do NOT modify the code.
+    DO NOT wrap the output in ``` or ```tsx
+  expected_output: >
+    Raw React TSX component code only.
+
+create_story:
+  description: >
+    You are given example usages of a ShadCN component in markdown.
+    Convert ONLY the documented examples into Storybook story written in TSX.
+
+    RULES (MANDATORY):
+    - Consolidate all imports.
+    - Do NOT add comments.
+    - Story names are provided next to ### in the markdown.
+    - Do NOT suffix or prefix story names with "Example" or "Story".
+    - IMPORTANT: Do NOT change any code inside the render() return block.
+    - DO NOT wrap the output in ``` or ```tsx
+    - Same component import use './<component name>'' other component import use '~/src/components/<component name>'
+
+    STORY NAME CONFLICT RULE:
+    - If a story name conflicts with an imported symbol:
+      Example:
+        import { Spinner } from '~/src/components/spinner'
+        export const Spinner: Story = { ... }
+      Then:
+        - Rename the export to SpinnerStory
+        - Add: SpinnerStory.storyName = "Spinner"
+      Apply this rule ONLY when there is a conflict.
+
+    IMPORT NORMALIZATION RULES:
+    - Replace "@/components/ui/<component>" with "~/src/components/<component>"
+    - Replace "./<component>" imports with "~/src/components/<component>"
+    - Replace "@/hooks/<hook>" with "~/src/hooks/<hook>"
+
+    LINK RULE:
+    - Do NOT use `next/link`
+    - Use a plain <a> tag for links
+
+    STORYBOOK FORMAT:
+    Use the following structure exactly:
+
+    import type { Meta, StoryObj } from '@storybook/react-vite'
+    import { Component } from './component'
+    import { Button } from '~/src/components/button'
+
+    const meta: Meta<typeof Component> = {
+      title: 'Components/Component',
+      component: Component,
+    }
+
+    export default meta
+    type Story = StoryObj<typeof Component>
+
+    export const Demo: Story = {
+      render: () => <Component />,
+    }
+
+    Do NOT invent examples. Use ONLY what exists in the markdown.
+  expected_output: >
+    Raw Storybook TSX story code only.
+
+create_test:
+  description: >
+    You are a senior frontend engineer writing unit tests using:
+    - Vitest
+    - @testing-library/react
+    - user-event (only when interactions exist)
+    - vitest-axe for accessibility
+
+    I will provide a React component (Radix / shadcn-style).
+    Your task is to generate a complete `.test.tsx` file for it.
+
+    ====================
+    STRICT REQUIREMENTS
+    ====================
+
+    1. Follow this exact test section order using `describe` blocks:
+       - rendering
+       - components
+       - variants
+       - size
+       - subcomponents (if available)
+       - state (if available)
+       - props
+       - interactions (if available)
+       - accessibility
+       - error handling
+       - exports
+
+    2. Testing conventions:
+       - Prefer querying via `data-slot` attributes
+       - Split assertions into small, focused test cases
+       - Do NOT test implementation details
+       - Do NOT test internal behavior of third-party libraries
+       - Avoid snapshots
+       - Avoid style assertions beyond class/attribute presence
+       - Prefer `container.querySelector` for slot checks
+       - Use `screen` only for visible user-facing content
+
+    3. Accessibility:
+       - Always include an axe test
+       - If a known false-positive exists, disable ONLY the specific axe rule
+         with a short comment
+
+    4. Interactions:
+       - Write interaction tests ONLY if the component explicitly handles user input
+       - Do NOT test interactions delegated to external libraries
+
+    5. Error handling:
+       - Test graceful handling of empty, missing, or minimal props
+       - Do NOT assert thrown errors from third-party libraries
+
+    6. Exports:
+       - Verify all named exports
+       - Use either a single consolidated test or split tests
+
+    7. Style & quality:
+       - Use clear, readable test names
+       - Keep tests deterministic and maintainable
+       - Match enterprise design-system quality
+       - Keep structure consistent across components
+
+    =============
+    OUTPUT FORMAT
+    =============
+
+    - Return the full `.test.tsx` file
+    - Use TypeScript
+    - DO NOT wrap the output in ``` or ```tsx
+    - No explanations unless absolutely necessary
+  expected_output: >
+    A complete `.test.tsx` file as a string containing valid TypeScript code.
+  agent: test_writer
+
+
+validate_output:
+  description: >
+    Validate that the generated component and story files:
+    - Exist
+    - Are non-empty
+    - Match the requested component
+  expected_output: >
+    A JSON object with:
+    - valid: boolean
