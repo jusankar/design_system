@@ -3,7 +3,7 @@
 	"exclude": ["node_modules", "dist", "src/sandbox"],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"types": ["vite/client", "vitest/importMeta", "vitest/globals"],
+		"types": ["vite/client", "vitest/importMeta", "vitest/globals", "@testing-library/jest-dom"],
 		"isolatedModules": true,
 		"esModuleInterop": true,
 		"jsx": "react-jsx",

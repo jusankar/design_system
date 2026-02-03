@@ -169,7 +169,6 @@ describe("Badge", () => {
     })
 
     it("renders gracefully when given undefined children", () => {
-      // @ts-expect-error testing resilience
       const { container } = render(<Badge>{undefined}</Badge>)
       expect(container.firstChild).toBeInTheDocument()
     })

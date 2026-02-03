@@ -18,6 +18,7 @@ def main():
         component_demo_code = None
         component_story_code = None
         component_test_code = None
+        all_components_code = None
 
         # ✅ Read CrewAI task outputs
         for task_output in result.tasks_output:
@@ -29,12 +30,17 @@ def main():
                 component_test_code = task_output.raw
             elif task_output.name == "create_story":
                 component_story_code = task_output.raw
+            elif task_output.name == "generate_all_components_page":
+                all_components_code = task_output.raw
 
         if not component_code:
             raise RuntimeError("Component TSX code not generated")
 
         if not component_demonstrator_code or not component_story_code or not component_test_code:
             raise RuntimeError("Component or Story code not generated")
+
+        if not all_components_code:
+            raise RuntimeError("AllComponents page was not generated")
 
         # ----------------------
         # Define project roots
@@ -75,6 +81,10 @@ def main():
         component_demonstrator_path = os.path.join(earth_dir, f"{component}Demo.tsx")
         with open(component_demonstrator_path, "w", encoding="utf-8") as f:
             f.write(component_demonstrator_code)
+        
+        page_dir = os.path.join(EARTH_ROOT, "src", "AllComponents.tsx")
+        with open(page_dir, "w", encoding="utf-8") as f:
+            f.write(all_components_code)
 
         # ----------------------
         # Print output paths
@@ -84,7 +94,7 @@ def main():
         print(f"   - story:   {story_path}")
         print(f"   - Demo:      {component_demonstrator_path}")
         print(f"   - Tests:     {test_path}")
-
+        print(f"✅ Updated consolidated page: AllComponents.tsx")
         print(f"✅ Processed component: {component}")
 
 if __name__ == "__main__":

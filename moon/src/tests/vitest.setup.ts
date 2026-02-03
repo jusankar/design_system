@@ -5,6 +5,7 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import * as axeMatchers from 'vitest-axe/matchers'
 import 'vitest-axe/extend-expect'
 import type { AxeMatchers } from 'vitest-axe'
+import '@testing-library/jest-dom'
 
 declare module 'vitest' {
 	interface Assertion<T = any> extends AxeMatchers {}

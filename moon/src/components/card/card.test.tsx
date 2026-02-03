@@ -1,7 +1,7 @@
 import React from "react"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { axe, toHaveNoViolations } from "vitest-axe"
+import { axe } from "vitest-axe"
 import {
   Card,
   CardAction,
@@ -84,7 +84,7 @@ describe("Card", () => {
     it("CardAction supports className and renders children", () => {
       const { container } = render(
         <CardAction className="custom-action">
-          <Button>Click</Button>
+          Click
         </CardAction>
       )
       const action = container.querySelector(".custom-action")

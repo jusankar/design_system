@@ -1,19 +1,17 @@
 fetch_component:
   description: >
-    Scrape the ShadCN component TSX code from
-    the Installation → Manual tab.
-    Extract ONLY the first copy-paste code block.
-  expected_output: >
-    A string containing valid TSX component code.fetch_component:
-  description: >
     Use the shadcn_component_scraper tool to scrape the ShadCN component page.
-    Navigate to Installation → Manual tab.
-    Extract ONLY the FIRST copy-paste code block shown under the Manual tab.
+    Navigate to the Installation section and switch to the Manual tab.
+    Locate the subsection titled
+    "Copy and paste the following code into your project."
+    Extract the code block that appears directly under this title.
     Do NOT summarize, modify, or generate code.
-    Return the extracted code exactly as scraped.
+    Return the extracted code exactly as shown.
   expected_output: >
     A raw string containing valid TSX component source code
-    exactly as shown in the ShadCN Manual installation section.
+    exactly as displayed under the
+    "Copy and paste the following code into your project"
+    subsection of the ShadCN Manual installation section.
     
 fetch_markdown:
   description: >
@@ -173,3 +171,19 @@ validate_output:
   expected_output: >
     A JSON object with:
     - valid: boolean
+
+generate_all_components_page:
+  description: >
+    Scan the moon project for available components and
+    generate a single React page in the earth project
+    that imports and renders ALL components.
+
+    Rules:
+    - One page only
+    - Alphabetical order
+    - Each component rendered in its own section
+    - Do NOT remove existing components
+    - Do NOT invent components
+    - DO NOT wrap the output in ``` or ```tsx
+  expected_output: >
+    A complete AllComponents.tsx file that renders all moon components.
