@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Alert, AlertAction, AlertDescription, AlertTitle } from '~/src/components/alert'
+import { Alert, AlertDescription, AlertTitle, AlertAction } from '~/src/components/alert'
 import { Button } from '~/src/components/button'
 import { CheckCircle2Icon, InfoIcon, AlertCircleIcon, AlertTriangleIcon } from 'lucide-react'
 

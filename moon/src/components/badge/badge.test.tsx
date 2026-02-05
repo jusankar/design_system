@@ -1,173 +1,150 @@
-import React from "react"
-import { render, screen } from "@testing-library/react"
+import * as React from "react"
+import { render, screen, cleanup } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { axe, toHaveNoViolations } from "vitest-axe"
-import { describe, expect, it } from "vitest"
-import * as BadgeModule from "@/components/ui/badge"
-import { Badge } from "@/components/ui/badge"
+import { axe } from "vitest-axe"
+import * as badgeModule from "~/src/components/badge"
+import { Badge } from "~/src/components/badge"
 
-expect.extend(toHaveNoViolations)
-
-describe("Badge - rendering", () => {
-  it("renders a badge with default variant and children", () => {
-    render(<Badge>Test Badge</Badge>)
-    const badge = screen.getByText("Test Badge")
-    expect(badge).toBeInTheDocument()
-    // Badge should have default variant class applied (class name inferred)
-    expect(badge).toHaveClass("inline-flex") // class presence to indicate badge styling (example)
+describe("Badge Component", () => {
+  afterEach(() => {
+    cleanup()
   })
 
-  it("renders a badge with minimal props", () => {
-    render(<Badge />)
-    const container = screen.queryByText("")
-    // Badge renders gracefully with no children (empty container or no element)
-    // Here we check that render does not throw and container is empty or Badge exists with no children
-    // Our Badge requires children, so likely renders as empty span or div
-    expect(container).not.toBeNull()
-  })
-})
-
-describe("Badge - components", () => {
-  it("renders a badge component successfully", () => {
-    render(<Badge>Component Test</Badge>)
-    const badge = screen.getByText("Component Test")
-    expect(badge).toBeDefined()
-  })
-})
-
-describe("Badge - variants", () => {
-  const variants: Array<[string, string]> = [
-    ["default", "default"],
-    ["secondary", "secondary"],
-    ["destructive", "destructive"],
-    ["outline", "outline"],
-    ["ghost", "ghost"],
-    ["link", "link"],
-  ]
-
-  variants.forEach(([variantName, variantProp]) => {
-    it(`renders the "${variantName}" variant`, () => {
-      render(<Badge variant={variantProp as any}>Variant</Badge>)
-      const badge = screen.getByText("Variant")
+  describe("rendering", () => {
+    it("renders the Badge with default variant and text content", () => {
+      render(<Badge>Default Badge</Badge>)
+      const badge = screen.getByText("Default Badge")
       expect(badge).toBeInTheDocument()
-      // We expect class presence for variant - check generic presence of variant string in className (implementation detail avoided)
-      // As styles might be classnames with variant prefix, looking for class that includes variantProp
-      const classList = badge.className
-      expect(classList).toEqual(expect.stringContaining(variantProp))
+      // Default variant is default; check class presence for default variant indicator
+      expect(badge).toHaveClass("badge") // Assuming the badge base class is 'badge'
+    })
+
+    it("renders empty children gracefully", () => {
+      render(<Badge>{""}</Badge>)
+      const badge = screen.getByText("")
+      expect(badge).toBeInTheDocument()
+    })
+
+    it("renders minimal props without crashing", () => {
+      render(<Badge>Minimal</Badge>)
+      expect(screen.getByText("Minimal")).toBeInTheDocument()
     })
   })
-})
 
-describe("Badge - size", () => {
-  it("does not have explicit size prop or size variants", () => {
-    // Badge does not expose size prop, test that default size styling exists
-    render(<Badge>Size Test</Badge>)
-    const badge = screen.getByText("Size Test")
-    expect(badge).toHaveClass("inline-flex") // inferred default inline-flex class for size control
-  })
-})
-
-describe("Badge - subcomponents", () => {
-  it("renders icon with data-icon=\"inline-start\" slot correctly", () => {
-    // Use a simple icon component mock for testing slot
-    const Icon = () => <svg data-icon="inline-start" />
-    render(
-      <Badge>
-        <Icon />
-        Icon Start
-      </Badge>,
-    )
-    const badge = screen.getByText("Icon Start")
-    expect(badge).toBeInTheDocument()
-    const icon = badge.querySelector("[data-icon='inline-start']")
-    expect(icon).toBeInTheDocument()
+  describe("components", () => {
+    it("renders Badge component from named import", () => {
+      expect(Badge).toBeTypeOf("function")
+    })
   })
 
-  it("renders icon with data-icon=\"inline-end\" slot correctly", () => {
-    const Icon = () => <svg data-icon="inline-end" />
-    render(
-      <Badge>
-        Icon End
-        <Icon />
-      </Badge>,
-    )
-    const badge = screen.getByText("Icon End")
-    expect(badge).toBeInTheDocument()
-    const icon = badge.querySelector("[data-icon='inline-end']")
-    expect(icon).toBeInTheDocument()
-  })
-})
+  describe("variants", () => {
+    const variants = [
+      "default",
+      "secondary",
+      "destructive",
+      "outline",
+      "ghost",
+      "link",
+    ] as const
 
-describe("Badge - state", () => {
-  it("does not have explicit state props", () => {
-    // No state props like disabled or active to test; badge is static display component
-    render(<Badge>Static State</Badge>)
-    const badge = screen.getByText("Static State")
-    expect(badge).toBeVisible()
-  })
-})
+    variants.forEach((variant) => {
+      it(`renders the Badge with variant="${variant}"`, () => {
+        render(<Badge variant={variant}>Variant {variant}</Badge>)
+        const badge = screen.getByText(`Variant ${variant}`)
+        expect(badge).toBeInTheDocument()
+        // check class for variant presence
+        expect(badge.className).toEqual(
+          expect.stringContaining(variant === "default" ? "default" : variant),
+        )
+      })
+    })
 
-describe("Badge - props", () => {
-  it("accepts and applies className prop", () => {
-    render(<Badge className="custom-class">Styled Badge</Badge>)
-    const badge = screen.getByText("Styled Badge")
-    expect(badge).toHaveClass("custom-class")
-  })
-
-  it("renders correctly when asChild is true with child as anchor", () => {
-    render(
-      <Badge asChild>
-        <a href="#test">Link Badge</a>
-      </Badge>,
-    )
-    // The rendered element is an anchor inside Badge
-    const link = screen.getByRole("link", { name: /Link Badge/i })
-    expect(link).toHaveAttribute("href", "#test")
-    expect(link).toBeInTheDocument()
-  })
-})
-
-describe("Badge - interactions", () => {
-  it("does not handle user interactions explicitly", () => {
-    render(<Badge>Interaction Test</Badge>)
-    const badge = screen.getByText("Interaction Test")
-    // Badge is non-interactive; click should not change anything
-    userEvent.click(badge)
-    expect(badge).toBeInTheDocument()
-  })
-})
-
-describe("Badge - accessibility", () => {
-  it("has no accessibility violations", async () => {
-    const { container } = render(<Badge>Accessible Badge</Badge>)
-    const results = await axe(container)
-    expect(results).toHaveNoViolations()
+    it("defaults to 'default' variant when variant prop is omitted", () => {
+      render(<Badge>Default Variant</Badge>)
+      const badge = screen.getByText("Default Variant")
+      expect(badge).toBeInTheDocument()
+      expect(badge.className).toEqual(expect.stringContaining("default"))
+    })
   })
 
-  it("includes accessible name", () => {
-    render(<Badge>Accessible Name</Badge>)
-    const badge = screen.getByText("Accessible Name")
-    expect(badge).toHaveAccessibleName("Accessible Name")
-  })
-})
-
-describe("Badge - error handling", () => {
-  it("renders gracefully with no children", () => {
-    render(<Badge>{null}</Badge>)
-    const badge = screen.container?.querySelector("span, div")
-    expect(badge).toBeInTheDocument()
+  describe("size", () => {
+    // Badge component does not seem to have size prop in API; skip
   })
 
-  it("renders gracefully with undefined variant", () => {
-    render(<Badge variant={undefined as any}>Undefined Variant</Badge>)
-    const badge = screen.getByText("Undefined Variant")
-    expect(badge).toBeInTheDocument()
+  describe("subcomponents", () => {
+    // No explicit subcomponents exported or documented; skip
   })
-})
 
-describe("Badge - exports", () => {
-  it("exports Badge as named export", () => {
-    expect(BadgeModule).toHaveProperty("Badge")
-    expect(Badge).toBeDefined()
+  describe("state", () => {
+    // No explicit state props or stateful behavior documented; skip
+  })
+
+  describe("props", () => {
+    it("accepts and applies className prop", () => {
+      render(<Badge className="custom-class">With Custom Class</Badge>)
+      const badge = screen.getByText("With Custom Class")
+      expect(badge).toHaveClass("custom-class")
+    })
+
+    it("accepts the 'asChild' prop and renders child element correctly", () => {
+      render(
+        <Badge asChild>
+          <a href="#test-link">Link Badge</a>
+        </Badge>,
+      )
+      const link = screen.getByRole("link", { name: "Link Badge" })
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute("href", "#test-link")
+    })
+
+    it("renders children with icons with appropriate data-icon attributes", () => {
+      render(
+        <Badge>
+          <span data-icon="inline-start">StartIcon</span>
+          Label
+          <span data-icon="inline-end">EndIcon</span>
+        </Badge>,
+      )
+      const badge = screen.getByText(/Label/)
+      const inlineStartIcon = badge.querySelector('[data-icon="inline-start"]')
+      const inlineEndIcon = badge.querySelector('[data-icon="inline-end"]')
+      expect(inlineStartIcon).toBeInTheDocument()
+      expect(inlineEndIcon).toBeInTheDocument()
+    })
+  })
+
+  describe("interactions", () => {
+    // Badge does not handle user input explicitly; no interaction tests needed
+  })
+
+  describe("accessibility", () => {
+    it("has no accessibility violations", async () => {
+      const { container } = render(<Badge>Accessible Badge</Badge>)
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it("renders user-facing text content visibly", () => {
+      render(<Badge>Visible Badge</Badge>)
+      expect(screen.getByText("Visible Badge")).toBeVisible()
+    })
+  })
+
+  describe("error handling", () => {
+    it("does not throw or error when rendered without children", () => {
+      expect(() => render(<Badge />)).not.toThrow()
+    })
+
+    it("handles invalid variant prop by rendering default variant", () => {
+      // @ts-expect-error simulate invalid variant
+      render(<Badge variant="invalid">Fallback Variant</Badge>)
+      expect(screen.getByText("Fallback Variant")).toBeInTheDocument()
+    })
+  })
+
+  describe("exports", () => {
+    it("exports all expected named exports", () => {
+      expect(typeof badgeModule.Badge).toBe("function")
+    })
   })
 })

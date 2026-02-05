@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@jusankar/moon"
 import { CheckCircle2Icon, InfoIcon } from "lucide-react"
 
 export function AlertDemo() {

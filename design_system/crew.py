@@ -3,7 +3,6 @@ import yaml
 
 from tools.shadcn_varient_scraper import shadcn_varient_scraper
 from tools.shadcn_component_scraper import shadcn_component_scraper
-from tools.scan_earth_components import scan_earth_components
 
 import os
 
@@ -42,8 +41,6 @@ def create_crew(component: str) -> Crew:
     component_story_creator_agent = Agent(**agents_cfg["component_story_creator"])
     component_test_creator_agent = Agent(**agents_cfg["component_test_creator"])
     validator_agent = Agent(**agents_cfg["validator"])
-    aggregator_agent = Agent(**agents_cfg["component_aggregator"], tools=[scan_earth_components], max_iterations=1,)
-
 
     # ----------------------
     # Tasks
@@ -54,7 +51,7 @@ def create_crew(component: str) -> Crew:
         description=(
             "Scrape the ShadCN component TSX code for the component "
             f"named `{component}` from the Installation → Manual tab. "
-            "Extract ONLY the first copy-paste code block."
+            "Extract ONLY the copy-paste code block."
         ),
         expected_output=tasks_cfg["fetch_component"]["expected_output"],
         agent=shadcn_component_scraper_agent,
@@ -110,16 +107,6 @@ def create_crew(component: str) -> Crew:
         context=[create_demo_task, create_story_task],
     )
 
-    aggregate_components_task = Task(
-        name="generate_all_components_page",
-        description=tasks_cfg["generate_all_components_page"]["description"],
-        expected_output=tasks_cfg["generate_all_components_page"]["expected_output"],
-        agent=aggregator_agent,
-        context=[create_demo_task],
-        output_key="all_components_page",
-    )
-
-
     # ----------------------
     # Crew
     # ----------------------
@@ -132,7 +119,6 @@ def create_crew(component: str) -> Crew:
             component_story_creator_agent,
             component_test_creator_agent,
             validator_agent,
-            aggregator_agent,
         ],
         tasks=[
             fetch_component_task,
@@ -141,7 +127,6 @@ def create_crew(component: str) -> Crew:
             create_story_task,
             create_test_task,
             validate_task,
-            aggregate_components_task,
         ],
         process="sequential",
         verbose=True,

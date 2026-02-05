@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Badge } from '~/src/components/badge'
 import { BadgeCheck, BookmarkIcon, ArrowUpRightIcon } from 'lucide-react'
-import { Spinner } from '~/src/components/spinner'
 
 const meta: Meta<typeof Badge> = {
   title: 'Components/Badge',
@@ -37,22 +36,7 @@ export const WithIcon: Story = {
   ),
 }
 
-export const WithSpinner: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-2">
-      <Badge variant="destructive">
-        <Spinner data-icon="inline-start" />
-        Deleting
-      </Badge>
-      <Badge variant="secondary">
-        Generating
-        <Spinner data-icon="inline-end" />
-      </Badge>
-    </div>
-  ),
-}
-
-export const AsLink: Story = {
+export const Link: Story = {
   render: () => (
     <Badge asChild>
       <a href="#link">

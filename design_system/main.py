@@ -1,6 +1,8 @@
 import sys
 import os
 from crew import create_crew
+from tools.aggregate_components import aggregate_components
+
 
 
 def update_moon_root_index(moon_root: str, component: str):
@@ -98,40 +100,16 @@ def main():
         earth_component_dir = os.path.join(EARTH_ROOT, "src", "components", component)
         os.makedirs(earth_component_dir, exist_ok=True)
 
-        with open(
-            os.path.join(earth_component_dir, f"{component}Demo.tsx"),
-            "w",
-            encoding="utf-8",
-        ) as f:
+        with open(os.path.join(earth_component_dir, f"{component}Demo.tsx"),"w", encoding="utf-8") as f:
             f.write(component_demo_code)
 
         print(f"✅ Processed component: {component}")
 
     # --------------------------------
-    # AGGREGATE ALL COMPONENTS (ONCE)
+    # AGGREGATE ALL COMPONENTS (PURE PYTHON)
     # --------------------------------
     print("\n🧩 Generating consolidated components page")
-
-    aggregator_crew = create_crew("aggregate-only")
-    aggregator_result = aggregator_crew.kickoff()
-
-    all_components_code = None
-
-    for task_output in aggregator_result.tasks_output:
-        if task_output.name == "generate_all_components_page":
-            all_components_code = task_output.raw
-            break
-
-    if not all_components_code:
-        raise RuntimeError("Failed to generate consolidated components page")
-
-    page_dir = os.path.join(EARTH_ROOT, "src", "pages")
-    os.makedirs(page_dir, exist_ok=True)
-
-    page_path = os.path.join(page_dir, "home.tsx")
-    with open(page_path, "w", encoding="utf-8") as f:
-        f.write(all_components_code)
-
+    aggregate_components()
     print("✅ Updated consolidated page: home.tsx")
 
 
