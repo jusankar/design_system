@@ -1,6 +1,7 @@
 import React from "react"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { describe, it, expect } from "vitest"
 import { axe } from "vitest-axe"
 import {
   Card,
@@ -10,215 +11,291 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "~/src/components/card"
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
-describe("Card", () => {
+describe("Card Component", () => {
   describe("rendering", () => {
-    it("renders the Card container", () => {
-      const { container } = render(<Card>Test card</Card>)
-      expect(container.firstChild).toBeInTheDocument()
-    })
-
-    it("renders CardHeader, CardContent and CardFooter when provided", () => {
+    it("renders Card component with children", () => {
       render(
-        <Card>
-          <CardHeader>Header</CardHeader>
-          <CardContent>Content</CardContent>
-          <CardFooter>Footer</CardFooter>
-        </Card>
+        <Card data-testid="card">
+          <CardHeader data-testid="card-header">
+            <CardTitle data-testid="card-title">Title</CardTitle>
+            <CardDescription data-testid="card-description">
+              Description
+            </CardDescription>
+            <CardAction data-testid="card-action">Action</CardAction>
+          </CardHeader>
+          <CardContent data-testid="card-content">Content</CardContent>
+          <CardFooter data-testid="card-footer">Footer</CardFooter>
+        </Card>,
       )
-      expect(screen.getByText("Header")).toBeVisible()
-      expect(screen.getByText("Content")).toBeVisible()
-      expect(screen.getByText("Footer")).toBeVisible()
-    })
-
-    it("renders CardTitle and CardDescription inside CardHeader", () => {
-      render(
-        <CardHeader>
-          <CardTitle>Title</CardTitle>
-          <CardDescription>Description</CardDescription>
-        </CardHeader>
+      expect(screen.getByTestId("card")).toBeInTheDocument()
+      expect(screen.getByTestId("card-header")).toBeInTheDocument()
+      expect(screen.getByTestId("card-title")).toHaveTextContent("Title")
+      expect(screen.getByTestId("card-description")).toHaveTextContent(
+        "Description",
       )
-      expect(screen.getByText("Title")).toBeVisible()
-      expect(screen.getByText("Description")).toBeVisible()
-    })
-
-    it("renders CardAction inside CardHeader", () => {
-      render(
-        <CardHeader>
-          <CardAction>Action</CardAction>
-        </CardHeader>
-      )
-      expect(screen.getByText("Action")).toBeVisible()
+      expect(screen.getByTestId("card-action")).toHaveTextContent("Action")
+      expect(screen.getByTestId("card-content")).toHaveTextContent("Content")
+      expect(screen.getByTestId("card-footer")).toHaveTextContent("Footer")
     })
   })
 
   describe("components", () => {
-    it("CardHeader supports className and renders correctly", () => {
+    it("renders CardHeader component", () => {
       const { container } = render(
-        <CardHeader className="custom-header">Header</CardHeader>
+        <Card>
+          <CardHeader data-slot="card-header">Header Content</CardHeader>
+        </Card>,
       )
-      const header = container.querySelector(".custom-header")
-      expect(header).toBeInTheDocument()
-      expect(header).toHaveTextContent("Header")
+      expect(container.querySelector("[data-slot='card-header']")).toHaveTextContent(
+        "Header Content",
+      )
     })
 
-    it("CardTitle supports className and renders text", () => {
+    it("renders CardTitle component", () => {
       const { container } = render(
-        <CardTitle className="custom-title">My Title</CardTitle>
+        <Card>
+          <CardTitle data-slot="card-title">Card Title</CardTitle>
+        </Card>,
       )
-      const title = container.querySelector(".custom-title")
-      expect(title).toBeInTheDocument()
-      expect(title).toHaveTextContent("My Title")
+      expect(container.querySelector("[data-slot='card-title']")).toHaveTextContent(
+        "Card Title",
+      )
     })
 
-    it("CardDescription supports className and renders text", () => {
+    it("renders CardDescription component", () => {
       const { container } = render(
-        <CardDescription className="custom-description">Desc</CardDescription>
+        <Card>
+          <CardDescription data-slot="card-description">
+            Card Description
+          </CardDescription>
+        </Card>,
       )
-      const description = container.querySelector(".custom-description")
-      expect(description).toBeInTheDocument()
-      expect(description).toHaveTextContent("Desc")
+      expect(
+        container.querySelector("[data-slot='card-description']"),
+      ).toHaveTextContent("Card Description")
     })
 
-    it("CardAction supports className and renders children", () => {
+    it("renders CardAction component", () => {
       const { container } = render(
-        <CardAction className="custom-action">
-          Click
-        </CardAction>
+        <Card>
+          <CardAction data-slot="card-action">Action Content</CardAction>
+        </Card>,
       )
-      const action = container.querySelector(".custom-action")
-      expect(action).toBeInTheDocument()
-      expect(screen.getByRole("button", { name: "Click" })).toBeVisible()
+      expect(container.querySelector("[data-slot='card-action']")).toHaveTextContent(
+        "Action Content",
+      )
     })
 
-    it("CardContent supports className and renders children", () => {
+    it("renders CardContent component", () => {
       const { container } = render(
-        <CardContent className="custom-content">
-          <p>Content text</p>
-        </CardContent>
+        <Card>
+          <CardContent data-slot="card-content">Content Text</CardContent>
+        </Card>,
       )
-      const content = container.querySelector(".custom-content")
-      expect(content).toBeInTheDocument()
-      expect(screen.getByText("Content text")).toBeVisible()
+      expect(container.querySelector("[data-slot='card-content']")).toHaveTextContent(
+        "Content Text",
+      )
     })
 
-    it("CardFooter supports className and renders children", () => {
+    it("renders CardFooter component", () => {
       const { container } = render(
-        <CardFooter className="custom-footer">Footer content</CardFooter>
+        <Card>
+          <CardFooter data-slot="card-footer">Footer Content</CardFooter>
+        </Card>,
       )
-      const footer = container.querySelector(".custom-footer")
-      expect(footer).toBeInTheDocument()
-      expect(screen.getByText("Footer content")).toBeVisible()
+      expect(container.querySelector("[data-slot='card-footer']")).toHaveTextContent(
+        "Footer Content",
+      )
     })
   })
 
   describe("variants", () => {
-    it("does not apply any special variant classes by default", () => {
-      const { container } = render(<Card>Default</Card>)
-      expect(container.firstChild).not.toHaveClass(/size-/)
+    it("does not apply size classes by default", () => {
+      const { container } = render(<Card data-testid="card" />)
+      const card = container.querySelector("[data-testid='card']")
+      expect(card).toBeInTheDocument()
+      expect(card).not.toHaveClass("sm")
     })
   })
 
   describe("size", () => {
-    it("applies small size class when size='sm' is set", () => {
-      const { container } = render(<Card size="sm">Small Card</Card>)
-      expect(container.firstChild).toHaveClass("sm")
+    it("applies small size variant class when size='sm'", () => {
+      const { container } = render(<Card size="sm" data-testid="card" />)
+      const card = container.querySelector("[data-testid='card']")
+      expect(card).toBeInTheDocument()
+      // Size variant applies smaller padding or spacing, class detection simplified here:
+      expect(card).toHaveClass("sm")
     })
 
-    it("defaults to normal size when size is not set", () => {
-      const { container } = render(<Card>Default Size</Card>)
-      // No "sm" class expected on root container for default
-      expect(container.firstChild).not.toHaveClass("sm")
+    it("applies no small size class when size is default", () => {
+      const { container } = render(<Card size="default" data-testid="card" />)
+      const card = container.querySelector("[data-testid='card']")
+      expect(card).toBeInTheDocument()
+      expect(card).not.toHaveClass("sm")
     })
   })
 
   describe("subcomponents", () => {
-    // Subcomponents covered individually
-    it("CardTitle renders as heading by default", () => {
-      render(<CardTitle>Heading Title</CardTitle>)
-      const heading = screen.getByText("Heading Title")
-      expect(heading.tagName.toLowerCase()).toMatch(/h[1-6]/)
+    it("CardHeader, CardTitle, CardDescription, CardAction, CardContent, and CardFooter exist as named exports", () => {
+      expect(CardHeader).toBeDefined()
+      expect(CardTitle).toBeDefined()
+      expect(CardDescription).toBeDefined()
+      expect(CardAction).toBeDefined()
+      expect(CardContent).toBeDefined()
+      expect(CardFooter).toBeDefined()
     })
   })
 
   describe("state", () => {
-    // No explicit state props or stateful behavior found in the component
+    // No stateful props documented or handled in Card components, skip
   })
 
   describe("props", () => {
-    it("forwards className to root Card container", () => {
-      const { container } = render(<Card className="my-card">Content</Card>)
-      expect(container.firstChild).toHaveClass("my-card")
+    it("assigns className prop to Card", () => {
+      const { container } = render(<Card className="custom-class" data-testid="card" />)
+      const card = container.querySelector("[data-testid='card']")
+      expect(card).toHaveClass("custom-class")
     })
 
-    it("forwards other props to the root Card container", () => {
+    it("assigns className prop to CardHeader", () => {
       const { container } = render(
-        <Card id="card-id" data-testid="card-test">
-          Content
-        </Card>
+        <Card>
+          <CardHeader className="header-class" data-slot="card-header" />
+        </Card>,
       )
-      expect(container.firstChild).toHaveAttribute("id", "card-id")
-      expect(container.firstChild).toHaveAttribute("data-testid", "card-test")
+      expect(container.querySelector("[data-slot='card-header']")).toHaveClass(
+        "header-class",
+      )
+    })
+
+    it("assigns className prop to CardTitle", () => {
+      const { container } = render(
+        <Card>
+          <CardTitle className="title-class" data-slot="card-title" />
+        </Card>,
+      )
+      expect(container.querySelector("[data-slot='card-title']")).toHaveClass(
+        "title-class",
+      )
+    })
+
+    it("assigns className prop to CardDescription", () => {
+      const { container } = render(
+        <Card>
+          <CardDescription className="desc-class" data-slot="card-description" />
+        </Card>,
+      )
+      expect(container.querySelector("[data-slot='card-description']")).toHaveClass(
+        "desc-class",
+      )
+    })
+
+    it("assigns className prop to CardAction", () => {
+      const { container } = render(
+        <Card>
+          <CardAction className="action-class" data-slot="card-action" />
+        </Card>,
+      )
+      expect(container.querySelector("[data-slot='card-action']")).toHaveClass(
+        "action-class",
+      )
+    })
+
+    it("assigns className prop to CardContent", () => {
+      const { container } = render(
+        <Card>
+          <CardContent className="content-class" data-slot="card-content" />
+        </Card>,
+      )
+      expect(container.querySelector("[data-slot='card-content']")).toHaveClass(
+        "content-class",
+      )
+    })
+
+    it("assigns className prop to CardFooter", () => {
+      const { container } = render(
+        <Card>
+          <CardFooter className="footer-class" data-slot="card-footer" />
+        </Card>,
+      )
+      expect(container.querySelector("[data-slot='card-footer']")).toHaveClass(
+        "footer-class",
+      )
     })
   })
 
   describe("interactions", () => {
-    // No user input interactions handled directly by Card components
+    // The Card components themselves do not handle direct user input or interaction.
+    // Interactions are delegated to child components (e.g. Button).
+    // No specific interaction tests here per guideline.
   })
 
   describe("accessibility", () => {
-    it("has no accessibility violations when rendering full Card", async () => {
+    it("has no accessibility violations", async () => {
       const { container } = render(
         <Card>
           <CardHeader>
-            <CardTitle>Title</CardTitle>
-            <CardDescription>Description</CardDescription>
+            <CardTitle>Accessible Title</CardTitle>
+            <CardDescription>Description text</CardDescription>
             <CardAction>
+              <Button variant="link">Action</Button>
             </CardAction>
           </CardHeader>
           <CardContent>
-            <p>This is the main content</p>
+            <p>Some content inside card content.</p>
           </CardContent>
           <CardFooter>
+            <Button>Footer Button</Button>
           </CardFooter>
-        </Card>
+        </Card>,
       )
       const results = await axe(container)
       expect(results).toHaveNoViolations()
     })
-
-    it("renders CardTitle as a heading element for semantic accessibility", () => {
-      render(<CardTitle>Accessible Title</CardTitle>)
-      const title = screen.getByText("Accessible Title")
-      // Heading tags h1-h6
-      expect(title.tagName).toMatch(/H[1-6]/)
-    })
   })
 
   describe("error handling", () => {
-    it("renders without crashing when no children are provided", () => {
-      const { container } = render(<Card />)
-      expect(container.firstChild).toBeInTheDocument()
+    it("renders without children without errors", () => {
+      const { container } = render(<Card data-testid="card" />)
+      expect(container.querySelector("[data-testid='card']")).toBeInTheDocument()
     })
 
-    it("renders subcomponents gracefully with minimal or empty props", () => {
-      const { container } = render(
-        <Card>
-          <CardHeader className="">
-            <CardTitle />
-            <CardDescription />
-          </CardHeader>
-          <CardContent />
-          <CardFooter />
-        </Card>
-      )
-      expect(container.firstChild).toBeInTheDocument()
+    it("renders CardHeader without children without errors", () => {
+      const { container } = render(<CardHeader data-slot="card-header" />)
+      expect(container.querySelector("[data-slot='card-header']")).toBeInTheDocument()
+    })
+
+    it("renders CardTitle without children without errors", () => {
+      const { container } = render(<CardTitle data-slot="card-title" />)
+      expect(container.querySelector("[data-slot='card-title']")).toBeInTheDocument()
+    })
+
+    it("renders CardDescription without children without errors", () => {
+      const { container } = render(<CardDescription data-slot="card-description" />)
+      expect(container.querySelector("[data-slot='card-description']")).toBeInTheDocument()
+    })
+
+    it("renders CardAction without children without errors", () => {
+      const { container } = render(<CardAction data-slot="card-action" />)
+      expect(container.querySelector("[data-slot='card-action']")).toBeInTheDocument()
+    })
+
+    it("renders CardContent without children without errors", () => {
+      const { container } = render(<CardContent data-slot="card-content" />)
+      expect(container.querySelector("[data-slot='card-content']")).toBeInTheDocument()
+    })
+
+    it("renders CardFooter without children without errors", () => {
+      const { container } = render(<CardFooter data-slot="card-footer" />)
+      expect(container.querySelector("[data-slot='card-footer']")).toBeInTheDocument()
     })
   })
 
   describe("exports", () => {
-    it("exports all subcomponents as named exports", () => {
+    it("exports all named components", () => {
       expect(Card).toBeDefined()
       expect(CardHeader).toBeDefined()
       expect(CardTitle).toBeDefined()

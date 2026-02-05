@@ -3,7 +3,7 @@ import yaml
 
 from tools.shadcn_varient_scraper import shadcn_varient_scraper
 from tools.shadcn_component_scraper import shadcn_component_scraper
-from tools.scan_moon_components import scan_moon_components
+from tools.scan_earth_components import scan_earth_components
 
 import os
 
@@ -42,7 +42,7 @@ def create_crew(component: str) -> Crew:
     component_story_creator_agent = Agent(**agents_cfg["component_story_creator"])
     component_test_creator_agent = Agent(**agents_cfg["component_test_creator"])
     validator_agent = Agent(**agents_cfg["validator"])
-    aggregator_agent = Agent(**agents_cfg["component_aggregator"], tools=[scan_moon_components], max_iterations=1,)
+    aggregator_agent = Agent(**agents_cfg["component_aggregator"], tools=[scan_earth_components], max_iterations=1,)
 
 
     # ----------------------
@@ -115,6 +115,7 @@ def create_crew(component: str) -> Crew:
         description=tasks_cfg["generate_all_components_page"]["description"],
         expected_output=tasks_cfg["generate_all_components_page"]["expected_output"],
         agent=aggregator_agent,
+        context=[create_demo_task],
         output_key="all_components_page",
     )
 

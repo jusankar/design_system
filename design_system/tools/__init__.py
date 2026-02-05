@@ -1,3 +1,3 @@
 from .shadcn_varient_scraper import shadcn_varient_scraper
 from .shadcn_component_scraper import shadcn_component_scraper
-from .scan_moon_components import scan_moon_components
+from .scan_earth_components import scan_earth_components

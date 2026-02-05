@@ -174,16 +174,26 @@ validate_output:
 
 generate_all_components_page:
   description: >
-    Scan the moon project for available components and
-    generate a single React page in the earth project
-    that imports and renders ALL components.
+    Scan earth/src/components for ALL available demo components
+    using the scan_earth_components tool.
+
+    Inline ALL demo JSX directly into the page.
+    Import ONLY from "@jusankar/moon".
 
     Rules:
     - One page only
+    - Page title: "All Components"
     - Alphabetical order
-    - Each component rendered in its own section
-    - Do NOT remove existing components
+    - Three-column responsive grid
+    - Each component rendered in its own <section>
     - Do NOT invent components
-    - DO NOT wrap the output in ``` or ```tsx
+    - Do NOT remove existing components
+    - Do NOT wrap output in ``` or ```tsx
+    - @/components/ui/<component name> should be @jusankar/moon
+
+    Output must be a COMPLETE home.tsx file.
   expected_output: >
-    A complete AllComponents.tsx file that renders all moon components.
+    A valid home.tsx rendering all component demos.
+
+
+

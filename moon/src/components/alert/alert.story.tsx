@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Alert, AlertDescription, AlertTitle, AlertAction } from '~/src/components/alert'
+import { Alert, AlertAction, AlertDescription, AlertTitle } from '~/src/components/alert'
+import { Button } from '~/src/components/button'
 import { CheckCircle2Icon, InfoIcon, AlertCircleIcon, AlertTriangleIcon } from 'lucide-react'
 
 const meta: Meta<typeof Alert> = {
@@ -15,7 +16,8 @@ export const Basic: Story = {
       <CheckCircle2Icon />
       <AlertTitle>Account updated successfully</AlertTitle>
       <AlertDescription>
-        Your profile information has been saved. Changes will be reflected immediately.
+        Your profile information has been saved. Changes will be reflected
+        immediately.
       </AlertDescription>
     </Alert>
   ),
@@ -27,7 +29,8 @@ export const Destructive: Story = {
       <AlertCircleIcon />
       <AlertTitle>Payment failed</AlertTitle>
       <AlertDescription>
-        Your payment could not be processed. Please check your payment method and try again.
+        Your payment could not be processed. Please check your payment method
+        and try again.
       </AlertDescription>
     </Alert>
   ),
@@ -37,9 +40,13 @@ export const Action: Story = {
   render: () => (
     <Alert className="max-w-md">
       <AlertTitle>Dark mode is now available</AlertTitle>
-      <AlertDescription>Enable it under your profile settings to get started.</AlertDescription>
+      <AlertDescription>
+        Enable it under your profile settings to get started.
+      </AlertDescription>
       <AlertAction>
+        <Button size="xs" variant="default">
           Enable
+        </Button>
       </AlertAction>
     </Alert>
   ),
@@ -51,7 +58,8 @@ export const Colors: Story = {
       <AlertTriangleIcon />
       <AlertTitle>Your subscription will expire in 3 days.</AlertTitle>
       <AlertDescription>
-        Renew now to avoid service interruption or upgrade to a paid plan to continue using the service.
+        Renew now to avoid service interruption or upgrade to a paid plan to
+        continue using the service.
       </AlertDescription>
     </Alert>
   ),
