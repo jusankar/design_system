@@ -141,6 +141,18 @@ Responsibilities:
 - Create and run the crew
 - Trigger file generation
 
+Install:
+```bash
+python -3.11 -m venv .venv  
+.\.venv\Scripts\Activate
+
+python -m pip install --upgrade pip setuptools wheel
+pip install crewai
+pip install playwright
+python -m playwright install
+```
+
 Usage:
 ```bash
-python main.py checkbox
+python main.py alert
+

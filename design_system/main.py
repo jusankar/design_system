@@ -8,8 +8,8 @@ from tools.aggregate_components import aggregate_components
 def update_moon_root_index(moon_root: str, component: str):
     index_path = os.path.join(moon_root, "src", "index.ts")
 
-    css_import = "import './styles/index.css'\n"
-    export_line = f"export * from './components/{component}'\n"
+    css_import = "import '@/styles/index.css'\n"
+    export_line = f"export * from '@/components/{component}'\n"
 
     lines: list[str] = []
 

@@ -57,9 +57,9 @@ create_story:
       Apply this rule ONLY when there is a conflict.
 
     IMPORT NORMALIZATION RULES:
-    - Replace "@/components/ui/<component>" with "~/src/components/<component>"
-    - Replace "./<component>" imports with "~/src/components/<component>"
-    - Replace "@/hooks/<hook>" with "~/src/hooks/<hook>"
+    - Replace "@/components/ui/<component>" with "@/components/<component>"
+    - Replace "./<component>" imports with "@/components/<component>"
+    - Replace "@/hooks/<hook>" with "@/hooks/<hook>"
 
     LINK RULE:
     - Do NOT use `next/link`
@@ -189,7 +189,7 @@ generate_all_components_page:
     - Do NOT invent components
     - Do NOT remove existing components
     - Do NOT wrap output in ``` or ```tsx
-    - @/components/ui/<component name> should be @jusankar/moon
+    - @/components/<component name> should be @jusankar/moon
 
     Output must be a COMPLETE home.tsx file.
   expected_output: >

@@ -42,3 +42,10 @@ moon/
 ```
 
 ---
+
+Install:
+```bash
+ npm install -g bun
+ bun install
+
+ bun run dev
